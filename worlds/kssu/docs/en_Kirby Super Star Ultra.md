@@ -44,13 +44,14 @@ Galactic Nova, and defeat Marx. This is the default option.
 - Completing each stage in Spring Breeze
 - Completing each stage in Dyna Blade
 - Collecting each treasure in The Great Cave Offensive
-- Beating DeDeDe in each round of Gourmet Race
+- Defeating each area boss in The Great Cave Offensive
+- Beating Dedede in each round of Gourmet Race
 - Completing each chapter in Revenge of Meta Knight
 - Collecting an ability in Milky Way Wishes
 - Defeating the boss on each planet of Milky Way Wishes
 - Completing each stage in Revenge of the King
 - Every round won in The Arena
-- Completing each chapter in Meta Knightmare Ultra
+- Defeating a boss / completing each level in Meta Knightmare Ultra
 - Every round won in Helper to Hero
 - Every round won in The True Arena
 
@@ -62,8 +63,11 @@ Galactic Nova, and defeat Marx. This is the default option.
 
 - Each Main-Game (11 total)
 - Each Sub-Game (5 total)
-- Every Copy Ability (24 total)
+- Every Copy Ability (23 total)
 - The Great Cave Offensive Treasures (60 total)
+- Progressive Stages for Dyna Blade (4 Total)
+- Progressive Keys for TGCO (minimum of 3 total)
+- Progressive Levels for Meta Knightmare Ultra (4 total)
 - Planets in Milky Way Wishes (7 total)
 - Extra stages in Dyna Blade (2 total)
 - 1-Ups, Foods, and Invincibility Candy (Filler)
