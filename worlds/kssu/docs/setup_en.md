@@ -13,6 +13,7 @@ If you find a bug, please report it to the #future-game-design thread for this g
        at `Config > Customize... > Advanced`. Else, your save data will be lost upon closing the emulator.
   - Detailed installation instructions for BizHawk can be found at the above link.
   - Windows users must run the prerequisite installer first, which can also be found at the above link.
+- A .nds file for the USA version of Kirby Super Star Ultra
 - The built-in BizHawk client within the Archipelago software, which can be found 
   [here](https://github.com/ArchipelagoMW/Archipelago/releases)
 
