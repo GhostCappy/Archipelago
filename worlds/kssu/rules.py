@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 def dyna_blade_rules(world: "KSSUWorld") -> None:
     set_rule = world.set_rule
     set_rule(world.get_location(location_names.db_switch_1),
-            HasAny(item_names.mirror, item_names.beam) |
+            HasAny(item_names.mirror, item_names.parasol, item_names.beam) |
                            (Has(item_names.plasma)
                             & HasAnyCount({item_names.dyna_blade_ex1: 1, 
                                           item_names.progressive_dyna_blade: 2})))
