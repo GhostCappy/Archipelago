@@ -189,7 +189,7 @@ class KSSUClient(BizHawkClient):
     
     games_cleared = 0x05C158
     
-    game_state = 0x041E77
+    game_state = 0x04095B
     
     ## Kirby
     kirby_lifes = 0x05B824
@@ -384,7 +384,7 @@ class KSSUClient(BizHawkClient):
         in_game = int.from_bytes(read_state[0], "little")
         demo_check = int.from_bytes(read_state[1], "little")
     
-        if in_game == 64 and demo_check != 11:
+        if in_game == 3 and demo_check != 11:
             self.player_actionable = True
         else:
             self.player_actionable = False
@@ -1258,7 +1258,7 @@ class KSSUClient(BizHawkClient):
                         self.received_deathlink = False
                         await self.deathlink_kill_player(ctx)
                     # Deathlink Sent
-                    elif current_hp == 0 and self.stateAlive == True:
+                    elif current_hp <= 0 and self.stateAlive == True:
                         self.stateAlive = False
                         await ctx.send_death(f"{ctx.player_names[ctx.slot]} sent a deathlink!")
                     elif current_hp > 0:
