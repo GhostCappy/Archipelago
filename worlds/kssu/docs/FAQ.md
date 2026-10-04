@@ -75,10 +75,10 @@ This bug will happen in Meta Knightmare Ultra when re-loading your save. Please 
 In a future update, this problem will hopefully be resolved in a better fashion.
 
 ___
-### I beat a level in Meta Knightmare Ultra, but the check didn't send!
+### I beat a boss/level in Meta Knightmare Ultra, but the check didn't send!
 
-Use the save point to send the check. You can also complete multiple levels before using the save
-to send multiple checks, or beat the whole thing to send them all at once.
+Use the save point to send any checks that may have not been sent. If this does not work, make sure to save
+(both in-game and using Control+S in bizhawk) and restart the game.
 
 If this does not work, double check that you are connected before sending a bug report.
 
@@ -93,7 +93,7 @@ Most updates will focus on bug fixes and quality of life. Outside of those, some
 - "Foodsanity" (Locations for each food item)
 - "Essencesanity" (Locations for each essence in other modes)
 
-There is no estimate time for when these will be implemented.
+There is no estimate time for when these will be implemented. Other possible ideas can be found in the Trello.
 
 ___
 ### I lost my save game! How do I make sure this doesn't happen again?

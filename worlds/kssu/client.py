@@ -983,8 +983,7 @@ class KSSUClient(BizHawkClient):
                         label = f"{arena} Straight Wins"           
                     loc = self.get_location(game_name, label)
                     if loc is not None:
-                        send_locations.add(loc)
-                        
+                        send_locations.add(loc)               
             
             # Meta Knightmare Ultra
             if cleared_games & 256:
@@ -992,20 +991,132 @@ class KSSUClient(BizHawkClient):
                 loc = self.get_location(game_name, "Complete")
                 if loc is not None:
                     send_locations.add(loc)    
+                 
                 # Send levels if they weren't sent 
                 for i in range(5):
                     loc = self.get_location(game_name, f"Level {i+1}")
                     if loc is not None:
                         send_locations.add(loc)
                     
-            if mku_complete:
+            if mku_complete:                     
+                # Level complete Locations
                 game_name = "Meta Knightmare Ultra"
                 for i in range(mku_complete):               
                     loc = self.get_location(game_name, f"Level {i+1}")
                     if loc is not None:
                         send_locations.add(loc)
-                
+                    # Send boss checks if not collected (ex. not connected before then)
+                    # Ok so I'm making a table instead of whatever tf I was doing (its 12am currently)
+                    mku_full_levels = (
+                        (500, 4), # Base ID offset, number of locations for level
+                        (504, 6),
+                        (510, 3),
+                        (513, 5),
+                        (518, 7)
+                    )                 
+                    offset, x = mku_full_levels[i]
+                    for j in range(x):
+                        loc = BASE_ID + offset + j
+                        if loc is not None:
+                            send_locations.add(loc)
+     
             if game == 8: 
+                # WORST CODE KNOWN TO MAN
+                # Level 1
+                if stage == 0:
+                    # Whispy Woods
+                    if screen >= 5:
+                        send_locations.add(BASE_ID + 500) 
+                    # Lololo & Lalala 
+                    if screen >= 12:
+                        send_locations.add(BASE_ID + 501) 
+                    # Kracko
+                    if screen >= 20:
+                        send_locations.add(BASE_ID + 502) 
+                    # King DDD
+                    if screen >= 22:
+                        send_locations.add(BASE_ID + 503) 
+
+                # Level 2
+                if stage == 1:
+                    # Peanut Plains
+                    if screen >= 5:
+                        send_locations.add(BASE_ID + 504) 
+                    # Mallow Castle
+                    if screen >= 14:
+                        send_locations.add(BASE_ID + 505)
+                    # Cocoa Cave
+                    if screen >= 22:
+                        send_locations.add(BASE_ID + 506)     
+                    # A sane person would just ask AI to generate this
+                    # Hi btw if you're reading this
+                    # Candy Mountain
+                    if screen >= 32:
+                        send_locations.add(BASE_ID + 507)
+                        
+                    # Iron Mam
+                    # So Iron Mam is screen 35, then it goes to screen 32.
+                    if screen >= 28 and screen < 35:
+                        send_locations.add(BASE_ID + 508) 
+                        
+                    # Dyna Blade
+                    if screen >= 36:
+                        send_locations.add(BASE_ID + 509)
+
+                # Level 3
+                if stage == 2:
+                    # Fatty Whale
+                    if screen >= 9:
+                        send_locations.add(BASE_ID + 510)  
+                    # Computer Virus
+                    if screen >= 15:
+                        send_locations.add(BASE_ID + 511)  
+                    # Wham Bam Rock
+                    if screen >= 28:
+                        send_locations.add(BASE_ID + 512)  
+
+                # Level 4
+                if stage == 3:
+                    # Heavy Lobster 1
+                    if screen >= 3:
+                        send_locations.add(BASE_ID + 513)  
+                    # Twin Woods
+                    if screen >= 8:
+                        send_locations.add(BASE_ID + 514) 
+                    # Main Cannon #2 (What happened to main cannon 1)
+                    if screen >= 22:
+                        send_locations.add(BASE_ID + 515)  
+                    # Heavy Lobster 2
+                    if screen >= 29:
+                        send_locations.add(BASE_ID + 516)  
+                    # Reactor
+                    if screen >= 36:
+                        send_locations.add(BASE_ID + 517)  
+
+                # Level 5
+                if stage == 4:
+                    # Twin Woods
+                    if screen >= 9:
+                        send_locations.add(BASE_ID + 518)  
+                    # Fatty Whale
+                    if screen >= 18:
+                        send_locations.add(BASE_ID + 519)
+                    # Kracko  
+                    if screen >= 32:
+                        send_locations.add(BASE_ID + 520)  
+                    # Chameleo Arm
+                    if screen >= 39:
+                        send_locations.add(BASE_ID + 521)  
+                    # Wham Bam Rock
+                    if screen >= 44:
+                        send_locations.add(BASE_ID + 522)  
+                    # Heavy Lobster
+                    if screen >= 51:
+                        send_locations.add(BASE_ID + 523)  
+                    # Computer Virus
+                    if screen >= 59:
+                        send_locations.add(BASE_ID + 524)  
+                        
                 # MKU Door 1                
                 if stage == 0 and screen == 22:
                     if self.progressive_mku_level >= 1 and mku_block_1 == 0x8038:
@@ -1018,7 +1129,7 @@ class KSSUClient(BizHawkClient):
                 if stage == 2 and screen == 29:
                     if self.progressive_mku_level >= 3 and mku_block_3 == 0x8064:
                         await self.bizhawk_set_halfword(ctx, self.mku_door_3, 0x814D)      
-                # MKU Door 2                
+                # MKU Door 2                    
                 if stage == 3 and screen == 36:
                     if self.progressive_mku_level >= 4 and mku_block_4 == 0x8001:
                         await self.bizhawk_set_halfword(ctx, self.mku_door_4, 0x813A)    
