@@ -986,6 +986,22 @@ class KSSUClient(BizHawkClient):
                         send_locations.add(loc)               
             
             # Meta Knightmare Ultra
+            mku_full_levels = (
+                (500, 4), # Base ID offset, number of locations for level
+                (504, 6),
+                (510, 3),
+                (513, 5),
+                (518, 7)
+            )            
+                
+            def mku_level_locations(level: int) -> None:
+                # Send boss checks if not collected (ex. not connected before then)
+                # Ok so I'm making a table instead of whatever tf I was doing (its 12am currently)     
+                offset, x = mku_full_levels[level]
+                for j in range(x):
+                    loc = BASE_ID + offset + j
+                    send_locations.add(loc)
+        
             if cleared_games & 256:
                 game_name = "Meta Knightmare Ultra"
                 loc = self.get_location(game_name, "Complete")
@@ -997,6 +1013,7 @@ class KSSUClient(BizHawkClient):
                     loc = self.get_location(game_name, f"Level {i+1}")
                     if loc is not None:
                         send_locations.add(loc)
+                    mku_level_locations(i)
                     
             if mku_complete:                     
                 # Level complete Locations
@@ -1005,20 +1022,7 @@ class KSSUClient(BizHawkClient):
                     loc = self.get_location(game_name, f"Level {i+1}")
                     if loc is not None:
                         send_locations.add(loc)
-                    # Send boss checks if not collected (ex. not connected before then)
-                    # Ok so I'm making a table instead of whatever tf I was doing (its 12am currently)
-                    mku_full_levels = (
-                        (500, 4), # Base ID offset, number of locations for level
-                        (504, 6),
-                        (510, 3),
-                        (513, 5),
-                        (518, 7)
-                    )                 
-                    offset, x = mku_full_levels[i]
-                    for j in range(x):
-                        loc = BASE_ID + offset + j
-                        if loc is not None:
-                            send_locations.add(loc)
+                    mku_level_locations(i)
      
             if game == 8: 
                 # WORST CODE KNOWN TO MAN
