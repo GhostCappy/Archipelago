@@ -8,10 +8,13 @@ If you find a bug, please report it to the #future-game-design thread for this g
 
 - [Archipelago](https://github.com/ArchipelagoMW/Archipelago/releases)
 - BizHawk: [Bizhawk Releases from TASVideos](https://tasvideos.org/BizHawk/ReleaseHistory)
-  - Version 2.9.1 is recommended; 2.10 is currently unable to connect.
+  - Version 2.11.1 is recommended
+    - **Important**: If you decide to play on 2.10 or lower, then you need to **disable AutoSaveRam**
+       at `Config > Customize... > Advanced`. Else, your save data will be lost upon closing the emulator.
   - Detailed installation instructions for BizHawk can be found at the above link.
   - Windows users must run the prerequisite installer first, which can also be found at the above link.
-- A .nds file for the USA version of Kirby Super Star Ultra
+- The built-in BizHawk client within the Archipelago software, which can be found 
+  [here](https://github.com/ArchipelagoMW/Archipelago/releases)
 
 ## Configuring your YAML file
 
