@@ -616,6 +616,12 @@ class KSSUClient(BizHawkClient):
             # =================================
             # Item Handling Loop
             # =================================
+            # Update number of Cave Keys & Progressive MKUs
+            names = [ctx.item_names.lookup_in_game(i.item) for i in ctx.items_received]
+            self.cave_keys_collected = min(4, names.count("Cave Key"))
+            self.progressive_mku_level = min(4, names.count("Meta Knightmare Ultra - Progressive Level"))
+
+            # Update on item recieved
             for index in range(min(self.received_items_count, received_index), len(ctx.items_received)):
                 network_item = ctx.items_received[index]
                 name = ctx.item_names.lookup_in_game(network_item.item)    
@@ -699,6 +705,7 @@ class KSSUClient(BizHawkClient):
                         if new_planets != current_unlocked_planets:
                             await self.play_sfx(ctx, "Planet")
                             await self.bizhawk_set_halfword(ctx, self.mww_unlocked_planets, new_planets)
+                            current_unlocked_planets = new_planets
                     # Dyna Blade
                     case _ if (network_item.item & 0xFFFF00) == (BASE_ID | 0x800) and network_item.item > 0:
                         match network_item.item & 0xFF:
@@ -708,18 +715,21 @@ class KSSUClient(BizHawkClient):
                                 if dyna_new_ex_stage != dyna_ex_current_stages:
                                     await self.bizhawk_set_halfword(ctx, self.dyna_ap_ex_stage, dyna_new_ex_stage)
                                     await self.play_sfx(ctx, "Filler")
+                                    dyna_ex_current_stages = dyna_new_ex_stage
                             # Dyna Blade EX 2
                             case 0x01:
                                 dyna_new_ex_stage  = dyna_ex_current_stages | (1 << 1)
                                 if dyna_new_ex_stage != dyna_ex_current_stages:
                                     await self.bizhawk_set_halfword(ctx, self.dyna_ap_ex_stage, dyna_new_ex_stage)
                                     await self.play_sfx(ctx, "Filler")
+                                    dyna_ex_current_stages = dyna_new_ex_stage
                             # Progressive Dyna Blade
                             case 0x02:
                                 dyna_new_stage = min(4, dyna_current_stages + 1)
                                 if dyna_new_stage != dyna_current_stages:
                                     await self.bizhawk_set_halfword(ctx, self.dyna_ap_stage, dyna_new_stage)     
-                                    await self.play_sfx(ctx, "Progressive")                      
+                                    await self.play_sfx(ctx, "Progressive")   
+                                    dyna_current_stages = dyna_new_stage                   
                     # AP-Specific
                     case "Rainbow Star":
                         if current_rainbow < 8:
@@ -729,13 +739,10 @@ class KSSUClient(BizHawkClient):
                                 [(self.rainbow_stars, new_rainbow.to_bytes(1, "little"), self.ram_mem_domain)],
                             )
                             await self.play_sfx(ctx, "Planet")
+                            current_rainbow = new_rainbow
                     case "Meta Knightmare Ultra - Progressive Level":
-                        if self.progressive_mku_level < 4:
-                            self.progressive_mku_level += 1
                         await self.play_sfx(ctx, "Progressive")   
                     case "Cave Key":
-                        if self.cave_keys_collected < 4:
-                            self.cave_keys_collected += 1  
                         await self.play_sfx(ctx, "Progressive")
                     # Filler    
                     case "1-Up" | "Maxim Tomato" | "Food" | "Invincible Candy":
@@ -795,6 +802,7 @@ class KSSUClient(BizHawkClient):
                             
             # Check if Iron Mam was defeated         
             if iron_mam == 8:
+                game_name = "Dyna Blade" 
                 loc = self.get_location(game_name, f"Iron Mam")
                 if loc is not None:
                     send_locations.add(loc)

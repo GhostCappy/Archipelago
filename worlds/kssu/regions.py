@@ -221,6 +221,12 @@ def create_milky_way_wishes(world: "KSSUWorld", menu: KSSURegion) -> None:
         milky_way_wishes.connect(region, None, lambda state, required=item: state.has(required, world.player))
 
     add_locations(world, milky_way_wishes, space_locations)
+    mww_cleared = world.get_location(location_names.mww_cleared)
+
+    # Can onyl clear MWW with all planets or 7 raibbow stars
+    mww_cleared.access_rule = lambda state: state.has_all(
+        [item_names.floria, item_names.aquarius, item_names.skyhigh, item_names.hotbeat, 
+         item_names.cavius,item_names.mekkai, item_names.halfmoon,], world.player) or state.has(item_names.rainbow_star, world.player, 7)
     menu.connect(milky_way_wishes, None, lambda state: state.has(item_names.milky_way_wishes, world.player))
 
     world.get_location(location_names.mww_complete).place_locked_item(
