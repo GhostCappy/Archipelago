@@ -85,7 +85,7 @@ gourmet_race_locations = {
     location_names.gr_stage_1: LocationData(BASE_ID + 12),
     location_names.gr_stage_2: LocationData(BASE_ID + 13),
     location_names.gr_stage_3: LocationData(BASE_ID + 14),
-    location_names.gr_win: LocationData(BASE_ID + 15),
+    location_names.gr_win: LocationData(BASE_ID + 292),
     location_names.gr_complete: LocationData(None),
 }
 
