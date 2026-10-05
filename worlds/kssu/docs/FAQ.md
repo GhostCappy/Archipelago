@@ -49,9 +49,11 @@ ___
 ### Are there any known bugs?
 
 - Occasionally in MWW, the abilities on the bottom screen will be the wrong color.
+- The abilities on MWW's pause screen are not what abilities were recieved, but which ones were collected. (Selecting them does nothing unless already collected)
 - When watching the beginner show, you may experience some visual bugs. It's best to skip these.
 - Swallowing two enemies will still give you at least one of the abilities or mix, even if the ability isn't unlocked.
 - When a progressive key is recieved for TGCO or MKU, the barrier will still be there visually (read more below)
+- Reloading Dyna Blade will always spawn Iron Mam, even when defeated.
 
 ___
 ### I found another bug, where do I report it?

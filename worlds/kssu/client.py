@@ -249,6 +249,7 @@ class KSSUClient(BizHawkClient):
     ## Kirby Card Swipe
     card_swipe_difficulty = 0x0B7774
     card_swipe_wins = 0x0B784A 
+    card_screen = 0x0B7768
     
     ## Kirby on the Draw
     draw_difficulty = 0x0B7894
@@ -265,6 +266,8 @@ class KSSUClient(BizHawkClient):
     snack_red_score = 0x0B860E
     snack_green_score = 0x0B8812
     snack_timer = 0x0B8828
+    
+    subgame_winner = 0x048A24
     
     ## Generic
     header_offset = 0x3ffe00
@@ -540,6 +543,7 @@ class KSSUClient(BizHawkClient):
                     (self.mku_door_4, 2, self.ram_mem_domain),
                     
                     (self.kirby_hp, 2, self.ram_mem_domain),
+                    (self.subgame_winner, 2, self.ram_mem_domain),
                 ]
             )
             
@@ -607,6 +611,7 @@ class KSSUClient(BizHawkClient):
             mku_block_3 = int.from_bytes(read_state[59], "little")
             mku_block_4 = int.from_bytes(read_state[60], "little")
             current_hp = int.from_bytes(read_state[61], "little")
+            winner_subgame = int.from_bytes(read_state[62], "little")
             
             # =================================
             # Item Handling Loop
@@ -768,10 +773,13 @@ class KSSUClient(BizHawkClient):
             # Dyna Blade 
             if cleared_games & 2:
                 game_name = "Dyna Blade"
+                loc = self.get_location(game_name, f"Stage 5")
+                if loc is not None:
+                    send_locations.add(loc)
                 loc = self.get_location(game_name, "Dyna Blade")
                 if loc is not None:
-                    send_locations.add(loc) 
-                    
+                    send_locations.add(loc)
+                
             for i in range(2):
                 if switch_activated & (1 << i):
                     game_name = "Dyna Blade"
@@ -780,20 +788,23 @@ class KSSUClient(BizHawkClient):
                         send_locations.add(loc)
 
             if dyna_stage:
-                game_name = "Dyna Blade"
-                for i in range(dyna_stage):               
-                    loc = self.get_location(game_name, f"Stage {i+1}")
-                    if loc is not None:
-                        send_locations.add(loc)              
+                game_name = "Dyna Blade"          
+                loc = self.get_location(game_name, f"Stage {dyna_stage}")
+                if loc is not None:
+                    send_locations.add(loc)              
                             
-                # Check if Iron Mam was defeated         
-                if iron_mam == 8:
-                    loc = self.get_location(game_name, f"Iron Mam")
-                    if loc is not None:
-                        send_locations.add(loc)
+            # Check if Iron Mam was defeated         
+            if iron_mam == 8:
+                loc = self.get_location(game_name, f"Iron Mam")
+                if loc is not None:
+                    send_locations.add(loc)
                         
             # Gourmet Race
             if cleared_games & 4:
+                game_name = "Gourmet Race"
+                loc = self.get_location(game_name, "Winner")
+                if loc is not None:
+                    send_locations.add(loc) 
                 game_name = "Gourmet Race"
                 loc = self.get_location(game_name, "Results")
                 if loc is not None:
@@ -829,6 +840,9 @@ class KSSUClient(BizHawkClient):
             # Dreadful
             if cleared_games & 8:
                 game_name = "The Great Cave Offensive"
+                loc = self.get_location(game_name, "Completed")
+                if loc is not None:
+                    send_locations.add(loc) 
                 loc = self.get_location(game_name, "Cave Exit")
                 if loc is not None:
                     send_locations.add(loc) 
@@ -929,6 +943,10 @@ class KSSUClient(BizHawkClient):
             # Dreadful: Part 2
             # If ability is collected in-game
             if cleared_games & 32:
+                game_name = "Milky Way Wishes"
+                loc = self.get_location(game_name, "Completed")
+                if loc is not None:
+                    send_locations.add(loc) 
                 loc = self.location_name_to_id.get("Galactic Nova")
                 if loc is not None:
                     send_locations.add(loc)
@@ -970,7 +988,11 @@ class KSSUClient(BizHawkClient):
             # Arena
             if cleared_games & 128:
                 game_name = "The Arena"
-                loc = self.get_location(game_name, "19 Straight Wins")
+                loc = self.get_location(game_name, "20 Straight Wins")
+                if loc is not None:
+                    send_locations.add(loc)    
+                game_name = "The Arena"
+                loc = self.get_location(game_name, "Completed")
                 if loc is not None:
                     send_locations.add(loc)       
                              
@@ -1144,6 +1166,9 @@ class KSSUClient(BizHawkClient):
                 loc = self.get_location(game_name, "13 Straight Wins")
                 if loc is not None:
                     send_locations.add(loc)       
+                loc = self.get_location(game_name, "Completed")
+                if loc is not None:
+                    send_locations.add(loc)      
                     
             if game == 9:
                 game_name = "Helper to Hero"
@@ -1162,6 +1187,9 @@ class KSSUClient(BizHawkClient):
                 loc = self.get_location(game_name, "10 Straight Wins")
                 if loc is not None:
                     send_locations.add(loc)       
+                loc = self.get_location(game_name, "Completed")
+                if loc is not None:
+                    send_locations.add(loc)      
                     
             if game == 10: 
                 game_name = "The True Arena"
@@ -1211,7 +1239,7 @@ class KSSUClient(BizHawkClient):
                         send_locations.add(loc)
 
             # Kirby Card Swipe
-            if card_score == 3 and card_difficulty in (0, 1, 2):
+            if card_score == 3 and card_difficulty in (0, 1, 2) and winner_subgame == 0:
                 game_name = "Kirby Card Swipe"
                 level = card_difficulty + 1
                 loc = self.get_location(game_name, f"Level {level}")
@@ -1222,7 +1250,7 @@ class KSSUClient(BizHawkClient):
             if draw_timer == 776 and draw_difficulty in (0, 1, 2):
                 game_name = "Kirby on the Draw"
                 
-                if draw_pink > max(draw_yellow, draw_red, draw_green):
+                if winner_subgame == 0:
                     level = draw_difficulty + 1
                     loc = self.get_location(game_name, f"Level {level}")
                     if loc is not None:
@@ -1232,7 +1260,7 @@ class KSSUClient(BizHawkClient):
             if snack_timer == 3600 and snack_difficulty in (0, 1, 2):
                 game_name = "Snack Tracks"
                 
-                if snack_pink > max(snack_yellow, snack_red, snack_green):
+                if winner_subgame == 0:
                     level = snack_difficulty + 1
                     loc = self.get_location(game_name, f"Level {level}")
                     if loc is not None:

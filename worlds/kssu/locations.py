@@ -85,6 +85,7 @@ gourmet_race_locations = {
     location_names.gr_stage_1: LocationData(BASE_ID + 12),
     location_names.gr_stage_2: LocationData(BASE_ID + 13),
     location_names.gr_stage_3: LocationData(BASE_ID + 14),
+    location_names.gr_win: LocationData(BASE_ID + 15),
     location_names.gr_complete: LocationData(None),
 }
 
@@ -147,6 +148,7 @@ old_tower_locations = {
 
 garden_locations = {
     location_names.tgco_wham_bam: LocationData(BASE_ID + 18),
+    location_names.tgco_cleared: LocationData(BASE_ID + 222),
     location_names.tgco_complete: LocationData(None),
     location_names.tgco_treasure_46: LocationData(BASE_ID + 64),
     location_names.tgco_treasure_47: LocationData(BASE_ID + 65),
@@ -263,6 +265,7 @@ copy_planet_locations = {
 }
 
 space_locations = {
+    location_names.mww_cleared: LocationData(BASE_ID + 116),
     location_names.mww_complete: LocationData(None)
 }
 
@@ -298,6 +301,7 @@ the_arena_locations = {
     location_names.the_arena_17: LocationData(BASE_ID + 136),
     location_names.the_arena_18: LocationData(BASE_ID + 137),
     location_names.the_arena_19: LocationData(BASE_ID + 138),
+    location_names.the_arena_20: LocationData(BASE_ID + 139),
     location_names.the_arena_complete: LocationData(None),
 }
 
@@ -396,6 +400,7 @@ helper_to_hero_locations = {
     location_names.hth_10: LocationData(BASE_ID + 909),
     location_names.hth_11: LocationData(BASE_ID + 910),
     location_names.hth_12: LocationData(BASE_ID + 911),
+    location_names.hth_13: LocationData(BASE_ID + 912),
     location_names.helper_to_hero_complete: LocationData(None),
 }
 
@@ -435,6 +440,7 @@ the_true_arena_locations = {
     location_names.the_true_arena_7: LocationData(BASE_ID + 216),
     location_names.the_true_arena_8: LocationData(BASE_ID + 217),
     location_names.the_true_arena_9: LocationData(BASE_ID + 218),
+    location_names.the_true_arena_10: LocationData(BASE_ID + 219),
     location_names.the_true_arena_complete: LocationData(None), 
 }
 

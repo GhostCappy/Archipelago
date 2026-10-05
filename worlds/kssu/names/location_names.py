@@ -20,6 +20,7 @@ db_iron_mam = "Dyna Blade - Iron Mam"
 gr_stage_1 = "Gourmet Race - Win Round 1"
 gr_stage_2 = "Gourmet Race - Win Round 2"
 gr_stage_3 = "Gourmet Race - Win Round 3"
+gr_win = "Gourmet Race - Winner"
 gr_complete = "Gourmet Race - Results"
 
 # The Great Cave Offensive
@@ -27,6 +28,7 @@ tgco_fatty_whale = "The Great Cave Offensive - Fatty Whale"
 tgco_virus = "The Great Cave Offensive - Computer Virus"
 tgco_chameleon = "The Great Cave Offensive - Chameleo Arm"
 tgco_wham_bam = "The Great Cave Offensive - Wham Bam Rock"
+tgco_cleared = "The Great Cave Offensive - Completed"
 tgco_complete = "The Great Cave Offensive - Cave Exit"
 
 # Treasures
@@ -128,6 +130,7 @@ mww_halfmoon = "Halfmoon - Computer Virus"
 mww_mirror = "Halfmoon - Mirror Essence"
 mww_ninja = "Halfmoon - Ninja Essence"
 mww_copy = "??? - Copy Essence"
+mww_cleared = "Milky Way Wishes - Completed"
 mww_complete = "Galactic Nova"
 
 # The Arena
@@ -150,7 +153,8 @@ the_arena_16 = "The Arena - 16 Straight Wins"
 the_arena_17 = "The Arena - 17 Straight Wins"
 the_arena_18 = "The Arena - 18 Straight Wins"
 the_arena_19 = "The Arena - 19 Straight Wins"
-the_arena_complete = "The Arena - 20 Straight Wins"
+the_arena_20 = "The Arena - 20 Straight Wins"
+the_arena_complete = "The Arena - Completed"
 
 # Revenge of the King
 rotk_whispy = "Revenge of the King - Stage 1"
@@ -206,7 +210,8 @@ hth_9 = "Helper to Hero - 9 Straight Wins"
 hth_10 = "Helper to Hero - 10 Straight Wins"
 hth_11 = "Helper to Hero - 11 Straight Wins"
 hth_12 = "Helper to Hero - 12 Straight Wins"
-helper_to_hero_complete = "Helper to Hero - 13 Straight Wins"
+hth_13 = "Helper to Hero - 13 Straight Wins"
+helper_to_hero_complete = "Helper to Hero - Completed"
 
 # Add later for helper sanity
 '''
@@ -242,7 +247,8 @@ the_true_arena_6 = "The True Arena - 6 Straight Wins"
 the_true_arena_7 = "The True Arena - 7 Straight Wins"
 the_true_arena_8 = "The True Arena - 8 Straight Wins"
 the_true_arena_9 = "The True Arena - 9 Straight Wins"
-the_true_arena_complete = "The True Arena - 10 Straight Wins"
+the_true_arena_10 = "The True Arena - 10 Straight Wins"
+the_true_arena_complete = "The True Arena - Completed"
 
 # Sub-Games
 # Megaton Punch
