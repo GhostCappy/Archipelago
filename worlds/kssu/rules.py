@@ -133,10 +133,17 @@ def milky_way_wishes_rules(world: "KSSUWorld") -> None:
                                               item_names.skyhigh, item_names.hotbeat,
                                               item_names.cavius, item_names.mekkai,
                                               item_names.halfmoon))
+        set_rule(world.get_location(location_names.mww_cleared),
+                 HasAll(item_names.floria, item_names.aquarius,
+                                              item_names.skyhigh, item_names.hotbeat,
+                                              item_names.cavius, item_names.mekkai,
+                                              item_names.halfmoon))
     else:
         set_rule(world.get_location(location_names.mww_complete),
                  Has(item_names.rainbow_star, 7))
-
+        set_rule(world.get_location(location_names.mww_cleared),
+                 Has(item_names.rainbow_star, 7))
+        
     set_rule(world.get_location(location_names.mww_sword),
              HasAny(item_names.beam, item_names.bomb, item_names.cutter, item_names.fire,
                                           item_names.hammer, item_names.jet, item_names.mirror, item_names.parasol,

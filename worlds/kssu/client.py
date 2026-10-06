@@ -276,7 +276,7 @@ class KSSUClient(BizHawkClient):
     dyna_ap_stage = 0x360000
     dyna_ap_ex_stage = 0x360002
     single_use_recieved = 0x360004
-    dyna_last_completed = 0x360006
+    dyna_completed_stages = 0x360006
     tgco_collected_1 = 0x360008
     tgco_collected_2 = 0x36000C
     mww_collected = 0x360010
@@ -507,7 +507,7 @@ class KSSUClient(BizHawkClient):
                     (self.snack_green_score, 2, self.ram_mem_domain),
                     (self.snack_timer, 2, self.ram_mem_domain),
                     
-                    (self.dyna_last_completed, 1, self.ram_mem_domain),
+                    (self.dyna_completed_stages, 1, self.ram_mem_domain),
                     (self.tgco_collected_1, 4, self.ram_mem_domain),
                     (self.tgco_collected_2, 4, self.ram_mem_domain),
                     (self.mww_collected, 4, self.ram_mem_domain),
@@ -794,10 +794,10 @@ class KSSUClient(BizHawkClient):
                     if loc is not None:
                         send_locations.add(loc)
 
-            if dyna_stage:
-                game_name = "Dyna Blade"          
-                loc = self.get_location(game_name, f"Stage {dyna_stage}")
-                if loc is not None:
+            # Stage completion
+            for i in range(5):       
+                loc = BASE_ID + 4 + i
+                if dyna_stage & (1 << i) and loc not in ctx.checked_locations:
                     send_locations.add(loc)              
                             
             # Check if Iron Mam was defeated         
