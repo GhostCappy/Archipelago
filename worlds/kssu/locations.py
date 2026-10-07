@@ -301,7 +301,6 @@ the_arena_locations = {
     location_names.the_arena_17: LocationData(BASE_ID + 136),
     location_names.the_arena_18: LocationData(BASE_ID + 137),
     location_names.the_arena_19: LocationData(BASE_ID + 138),
-    location_names.the_arena_20: LocationData(BASE_ID + 139),
     location_names.the_arena_complete: LocationData(None),
 }
 

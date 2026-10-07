@@ -53,7 +53,8 @@ ___
 - When watching the beginner show, you may experience some visual bugs. It's best to skip these.
 - Swallowing two enemies will still give you at least one of the abilities or mix, even if the ability isn't unlocked.
 - When a progressive key is recieved for TGCO or MKU, the barrier will still be there visually (read more below)
-- Reloading Dyna Blade will always spawn Iron Mam, even when defeated.
+- Reloading Dyna Blade will sometimes spawn Iron Mam, even when defeated.
+- If an ability is recieved while playing MWW, it won't appear until the game is exited and re-entered.
 
 ___
 ### I found another bug, where do I report it?

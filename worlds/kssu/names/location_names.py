@@ -153,8 +153,8 @@ the_arena_16 = "The Arena - 16 Straight Wins"
 the_arena_17 = "The Arena - 17 Straight Wins"
 the_arena_18 = "The Arena - 18 Straight Wins"
 the_arena_19 = "The Arena - 19 Straight Wins"
-the_arena_20 = "The Arena - 20 Straight Wins"
-the_arena_complete = "The Arena - Completed"
+# Ok theres not 20 rounds but its easier for rules.py
+the_arena_complete = "The Arena - 20 Straight Wins"
 
 # Revenge of the King
 rotk_whispy = "Revenge of the King - Stage 1"

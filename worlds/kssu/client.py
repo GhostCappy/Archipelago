@@ -415,12 +415,34 @@ class KSSUClient(BizHawkClient):
                     game = int.from_bytes(read_state[0], "little")
                     # Meta Knight has less HP than kirby
                     if game == 8:
-                        await self.bizhawk_add_halfword(ctx, self.kirby_hp, 50)    
+                        await self.bizhawk_set_halfword(ctx, self.kirby_hp, 50)    
                     else: 
-                        await self.bizhawk_add_halfword(ctx, self.kirby_hp, 76)     
+                        await self.bizhawk_set_halfword(ctx, self.kirby_hp, 76)     
                     await self.play_sfx(ctx, "Filler")                                            
                 case "Food":
-                    await self.bizhawk_add_halfword(ctx, self.kirby_hp, 16)      
+                    read_state = await bizhawk.read(
+                        ctx.bizhawk_ctx,
+                        [
+                            (self.kirby_hp, 1, self.ram_mem_domain),
+                            (self.current_game, 1, self.ram_mem_domain),
+                        ]
+                    )
+                    hp = int.from_bytes(read_state[0], "little")
+                    game = int.from_bytes(read_state[1], "little")
+                    # Make sure HP never exceeds 76 for kirby, or 50 for Meta Knight
+                    # Meta Knight
+                    if game == 8:
+                        if (hp + 16 > 50):
+                            new_hp = 50
+                        else:
+                            new_hp = hp + 16  
+                    # Kirby
+                    else:
+                        if (hp + 16 > 76):
+                            new_hp = 76
+                        else:
+                            new_hp = hp + 16                         
+                    await self.bizhawk_set_halfword(ctx, self.kirby_hp, new_hp)      
                     await self.play_sfx(ctx, "Filler")                                                          
                 case "Invincible Candy":
                     await self.bizhawk_set_halfword(ctx, self.candy_timer, 1320)
@@ -636,7 +658,8 @@ class KSSUClient(BizHawkClient):
                         if new_unlocked != unlocked_games:
                             await self.bizhawk_set_halfword(ctx, self.games_unlocked, new_unlocked)
                             # Plays a sound
-                            await self.play_sfx(ctx, "Major")
+                            if index >= received_index:
+                                await self.play_sfx(ctx, "Major")
                             # Make sure it doesnt repeat. probably not necessary tbh
                             unlocked_games = new_unlocked
                             
@@ -660,7 +683,8 @@ class KSSUClient(BizHawkClient):
                                     ctx.bizhawk_ctx,
                                     [(self.abilities_recieved, new_abilities.to_bytes(4, "little"), self.ram_mem_domain)],
                                 )
-                                await self.play_sfx(ctx, "Ability")
+                                if index >= received_index:
+                                    await self.play_sfx(ctx, "Ability")
                                 current_abils = new_abilities 
                         else: # Single Use
                             ability_bit = (network_item.item & 0xFF) - 0x14
@@ -670,7 +694,8 @@ class KSSUClient(BizHawkClient):
                                     ctx.bizhawk_ctx,
                                     [(self.single_use_recieved, new_single_abilities.to_bytes(4, "little"), self.ram_mem_domain)],
                                 )
-                                await self.play_sfx(ctx, "Ability")
+                                if index >= received_index:
+                                    await self.play_sfx(ctx, "Ability")
                                 current_single_abils = new_single_abilities
                     # Treasure
                     case _ if (network_item.item & 0xFFFF00) == (BASE_ID | 0x200) and network_item.item > 0:
@@ -683,7 +708,8 @@ class KSSUClient(BizHawkClient):
                                         ctx.bizhawk_ctx,
                                         [(self.tgco_received_1, new_treasure.to_bytes(4, "little"), self.ram_mem_domain)],
                                     )
-                                    await self.play_sfx(ctx, "Treasure")
+                                    if index >= received_index:
+                                        await self.play_sfx(ctx, "Treasure")
                                     treasure_received_1 = new_treasure
 
                         # If the bit is greater than 32, it should be written to the 2nd address instead
@@ -695,16 +721,18 @@ class KSSUClient(BizHawkClient):
                                     ctx.bizhawk_ctx,
                                     [(self.tgco_received_2, new_treasure.to_bytes(4, "little"), self.ram_mem_domain)],
                                 )
-                                await self.play_sfx(ctx, "Treasure")
+                                if index >= received_index:
+                                    await self.play_sfx(ctx, "Treasure")
                                 treasure_received_2 = new_treasure
 
                     # Planets
                     case _ if (network_item.item & 0xFFFF00) == (BASE_ID | 0x400) and network_item.item > 0:
                         planet_bit = network_item.item & 0xFF
                         new_planets = current_unlocked_planets | (1 << planet_bit)
-                        if new_planets != current_unlocked_planets:
-                            await self.play_sfx(ctx, "Planet")
+                        if new_planets != current_unlocked_planets:            
                             await self.bizhawk_set_halfword(ctx, self.mww_unlocked_planets, new_planets)
+                            if index >= received_index:
+                                await self.play_sfx(ctx, "Planet")
                             current_unlocked_planets = new_planets
                     # Dyna Blade
                     case _ if (network_item.item & 0xFFFF00) == (BASE_ID | 0x800) and network_item.item > 0:
@@ -714,39 +742,46 @@ class KSSUClient(BizHawkClient):
                                 dyna_new_ex_stage = dyna_ex_current_stages | (1 << 0)
                                 if dyna_new_ex_stage != dyna_ex_current_stages:
                                     await self.bizhawk_set_halfword(ctx, self.dyna_ap_ex_stage, dyna_new_ex_stage)
-                                    await self.play_sfx(ctx, "Filler")
+                                    if index >= received_index:
+                                        await self.play_sfx(ctx, "Filler")
                                     dyna_ex_current_stages = dyna_new_ex_stage
                             # Dyna Blade EX 2
                             case 0x01:
                                 dyna_new_ex_stage  = dyna_ex_current_stages | (1 << 1)
                                 if dyna_new_ex_stage != dyna_ex_current_stages:
                                     await self.bizhawk_set_halfword(ctx, self.dyna_ap_ex_stage, dyna_new_ex_stage)
-                                    await self.play_sfx(ctx, "Filler")
+                                    if index >= received_index:
+                                        await self.play_sfx(ctx, "Filler")
                                     dyna_ex_current_stages = dyna_new_ex_stage
                             # Progressive Dyna Blade
                             case 0x02:
                                 dyna_new_stage = min(4, dyna_current_stages + 1)
                                 if dyna_new_stage != dyna_current_stages:
                                     await self.bizhawk_set_halfword(ctx, self.dyna_ap_stage, dyna_new_stage)     
-                                    await self.play_sfx(ctx, "Progressive")   
+                                    if index >= received_index:
+                                        await self.play_sfx(ctx, "Progressive")   
                                     dyna_current_stages = dyna_new_stage                   
                     # AP-Specific
                     case "Rainbow Star":
-                        if current_rainbow < 8:
-                            new_rainbow = current_rainbow + 1
-                            await bizhawk.write(
-                                ctx.bizhawk_ctx,
-                                [(self.rainbow_stars, new_rainbow.to_bytes(1, "little"), self.ram_mem_domain)],
-                            )
-                            await self.play_sfx(ctx, "Planet")
-                            current_rainbow = new_rainbow
+                        if index >= received_index:
+                            if current_rainbow < 8:
+                                new_rainbow = current_rainbow + 1
+                                await bizhawk.write(
+                                    ctx.bizhawk_ctx,
+                                    [(self.rainbow_stars, new_rainbow.to_bytes(1, "little"), self.ram_mem_domain)],
+                                )
+                                await self.play_sfx(ctx, "Planet")
+                                current_rainbow = new_rainbow
                     case "Meta Knightmare Ultra - Progressive Level":
-                        await self.play_sfx(ctx, "Progressive")   
+                        if index >= received_index:
+                            await self.play_sfx(ctx, "Progressive")   
                     case "Cave Key":
-                        await self.play_sfx(ctx, "Progressive")
+                        if index >= received_index:
+                            await self.play_sfx(ctx, "Progressive")
                     # Filler    
                     case "1-Up" | "Maxim Tomato" | "Food" | "Invincible Candy":
-                        self.item_queue.insert(0, network_item)                                                             
+                        if index >= received_index:
+                            self.item_queue.insert(0, network_item)                                                             
                     # What did you get???
                     case _:
                         raise Exception("Bad item name received: " + name)
@@ -996,11 +1031,11 @@ class KSSUClient(BizHawkClient):
             # Arena
             if cleared_games & 128:
                 game_name = "The Arena"
-                loc = self.get_location(game_name, "20 Straight Wins")
+                loc = self.get_location(game_name, "19 Straight Wins")
                 if loc is not None:
                     send_locations.add(loc)    
                 game_name = "The Arena"
-                loc = self.get_location(game_name, "Completed")
+                loc = self.get_location(game_name, "20 Straight Wins")
                 if loc is not None:
                     send_locations.add(loc)       
                              
@@ -1090,7 +1125,7 @@ class KSSUClient(BizHawkClient):
                         
                     # Iron Mam
                     # So Iron Mam is screen 35, then it goes to screen 32.
-                    if screen >= 28 and screen < 35:
+                    if screen >= 32 and screen < 35:
                         send_locations.add(BASE_ID + 508) 
                         
                     # Dyna Blade
@@ -1106,7 +1141,7 @@ class KSSUClient(BizHawkClient):
                     if screen >= 15:
                         send_locations.add(BASE_ID + 511)  
                     # Wham Bam Rock
-                    if screen >= 28:
+                    if screen >= 29:
                         send_locations.add(BASE_ID + 512)  
 
                 # Level 4
