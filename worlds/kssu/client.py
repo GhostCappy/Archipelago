@@ -432,16 +432,10 @@ class KSSUClient(BizHawkClient):
                     # Make sure HP never exceeds 76 for kirby, or 50 for Meta Knight
                     # Meta Knight
                     if game == 8:
-                        if (hp + 16 > 50):
-                            new_hp = 50
-                        else:
-                            new_hp = hp + 16  
+                        new_hp = min(hp+16, 50)  
                     # Kirby
                     else:
-                        if (hp + 16 > 76):
-                            new_hp = 76
-                        else:
-                            new_hp = hp + 16                         
+                        new_hp = min(hp+16, 76)                        
                     await self.bizhawk_set_halfword(ctx, self.kirby_hp, new_hp)      
                     await self.play_sfx(ctx, "Filler")                                                          
                 case "Invincible Candy":
