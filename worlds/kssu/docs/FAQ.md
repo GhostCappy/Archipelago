@@ -55,6 +55,7 @@ ___
 - When a progressive key is recieved for TGCO or MKU, the barrier will still be there visually (read more below)
 - Reloading Dyna Blade will sometimes spawn Iron Mam, even when defeated.
 - If an ability is recieved while playing MWW, it won't appear until the game is exited and re-entered.
+- Hard restarting or re-opening the game will re-send every item.
 
 ___
 ### I found another bug, where do I report it?
