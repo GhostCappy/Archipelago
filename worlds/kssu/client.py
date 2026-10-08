@@ -329,8 +329,6 @@ class KSSUClient(BizHawkClient):
             ctx.command_processor.commands["keys"] = cmd_keys
         if "sub_area" not in ctx.command_processor.commands:
             ctx.command_processor.commands["sub_area"] = cmd_sub_area
-            
-    
         return True
 
     def on_package(self, ctx, cmd, args) -> None:
@@ -1039,7 +1037,8 @@ class KSSUClient(BizHawkClient):
                     if arena == 1:
                         label = "1 Straight Win"
                     else:
-                        label = f"{arena} Straight Wins"           
+                        for i in range(arena):
+                            label = f"{i+1} Straight Wins"           
                     loc = self.get_location(game_name, label)
                     if loc is not None:
                         send_locations.add(loc)               
@@ -1213,7 +1212,8 @@ class KSSUClient(BizHawkClient):
                     if arena == 1:
                         label = "1 Straight Win"
                     else:
-                        label = f"{arena} Straight Wins"          
+                        for i in range(arena):
+                            label = f"{i+1} Straight Wins"      
                     loc = self.get_location(game_name, label)
                     if loc is not None:
                         send_locations.add(loc)
@@ -1234,7 +1234,8 @@ class KSSUClient(BizHawkClient):
                     if arena == 1:
                         label = "1 Straight Win"
                     else:
-                        label = f"{arena} Straight Wins"
+                        for i in range(arena):
+                            label = f"{i+1} Straight Wins"    
                         
                     loc = self.get_location(game_name, label)
                     if loc is not None:

@@ -83,7 +83,6 @@ class StartingMainGame(Choice):
     option_revenge_of_the_king = 7
     option_meta_knightmare_ultra = 8
     option_helper_to_hero = 9
-    option_the_true_arena = 10
     default = 0
 
 class IncludedMainGames(OptionSet):
