@@ -556,7 +556,7 @@ class KSSUClient(BizHawkClient):
                     (self.mku_door_3, 2, self.ram_mem_domain),
                     (self.mku_door_4, 2, self.ram_mem_domain),
                     
-                    (self.kirby_hp, 2, self.ram_mem_domain),
+                    (self.kirby_hp, 1, self.ram_mem_domain,),
                     (self.subgame_winner, 2, self.ram_mem_domain),
                 ]
             )
@@ -624,7 +624,7 @@ class KSSUClient(BizHawkClient):
             mku_block_2 = int.from_bytes(read_state[58], "little")
             mku_block_3 = int.from_bytes(read_state[59], "little")
             mku_block_4 = int.from_bytes(read_state[60], "little")
-            current_hp = int.from_bytes(read_state[61], "little")
+            current_hp = int.from_bytes(read_state[61], "little", signed=True)
             winner_subgame = int.from_bytes(read_state[62], "little")
             
             # =================================
