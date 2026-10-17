@@ -45,10 +45,7 @@ def cmd_games(self: "BizHawkClientCommandProcessor") -> None:
     if not unlocked:
         logger.info("You have no games. Double-Check your address and make sure you are properly connected.")
         return
-
-    games = []
-    games.extend(f"{name}" for name in unlocked)
-    logger.info("Games Unlocked:\n" + "\n".join(games))
+    logger.info("Games Unlocked: " + ", ".join(unlocked))
     
 # Show which planets are currently unlocked
 def cmd_planet(self: "BizHawkClientCommandProcessor") -> None:
@@ -70,10 +67,7 @@ def cmd_planet(self: "BizHawkClientCommandProcessor") -> None:
     if not unlocked:
         logger.info("You have no planets. Double-Check your address and make sure you are properly connected.")
         return
-
-    mww_planets = []
-    mww_planets.extend(f"{name}" for name in unlocked)
-    logger.info("Planets Unlocked:\n" + "\n".join(mww_planets))
+    logger.info("Planets Unlocked: " + ", ".join(unlocked))
 
 # Show which abilities are currently unlocked
 def cmd_ability(self: "BizHawkClientCommandProcessor") -> None:
@@ -90,10 +84,7 @@ def cmd_ability(self: "BizHawkClientCommandProcessor") -> None:
     if not unlocked:
         logger.info("You have no abilities.")
         return
-
-    curr_abilities = []
-    curr_abilities.extend(f"{name}" for name in unlocked)
-    logger.info("Abilities Unlocked:\n" + "\n".join(curr_abilities) + "\n")
+    logger.info("Abilities Unlocked: " + ", ".join(unlocked))
 
 # Show how many keys / progressive items the player currently has
 def cmd_keys(self: "BizHawkClientCommandProcessor") -> None:
@@ -185,7 +176,7 @@ class KSSUClient(BizHawkClient):
     current_game = 0x05B6A5
     current_stage = 0x05B6A6
     current_screen = 0x05B6A7
-    unlock_true_arena = 0x05C175
+    true_arena = 0x05C175
     
     games_cleared = 0x05C158
     
@@ -222,7 +213,7 @@ class KSSUClient(BizHawkClient):
     romk_chapters = 0x05BE6C
     
     ## Milky Way Wishes
-    mww_abilities = 0x071201
+    mww_abilities = 0x071180
     unlock_nova = 0x071190
     
     ## Arena
@@ -241,9 +232,11 @@ class KSSUClient(BizHawkClient):
     
     ## Minigames
     ## Samurai
+    samurai_difficulty = 0x0A8441
     samurai_wins = 0x0A8448
     
     ## Megaton
+    megaton_difficulty = 0x0A83C5
     megaton_wins = 0x0A83D1
     
     ## Kirby Card Swipe
@@ -283,7 +276,7 @@ class KSSUClient(BizHawkClient):
     rainbow_stars = 0x360014
     mww_unlocked_planets = 0x360018
     planets_completed = 0x36001A
-    play_sound = 0x36001C
+    call_game_function = 0x36001C
     mww_mode = 0x360020
     games_unlocked = 0x360024
     tgco_received_1 = 0x360028
@@ -291,6 +284,8 @@ class KSSUClient(BizHawkClient):
     abilities_recieved = 0x360030
     received_offset = 0x360034
     dyna_switch_activated = 0x360038
+    play_sound = 0x360040
+    unlock_true_arena = 0x360042
     
     def __init__(self) -> None:
         super().__init__()
@@ -373,6 +368,13 @@ class KSSUClient(BizHawkClient):
             "1-Up": 0x58,
         }
         await self.bizhawk_set_halfword(ctx, self.play_sound, sound.get(sfx, 0))
+        await self.bizhawk_set_halfword(ctx, self.call_game_function, 1)
+        
+    async def freeze_trap(self, ctx: "BizHawkClientContext") -> None:
+        await self.bizhawk_set_halfword(ctx, self.call_game_function, 2)
+        
+    async def eject_trap(self, ctx: "BizHawkClientContext") -> None:
+        await self.bizhawk_set_halfword(ctx, self.call_game_function, 3)
         
     async def in_game(self, ctx: "BizHawkClientContext") -> None:
         read_state = await bizhawk.read(
@@ -439,9 +441,12 @@ class KSSUClient(BizHawkClient):
                 case "Invincible Candy":
                     await self.bizhawk_set_halfword(ctx, self.candy_timer, 1320)
                     await self.play_sfx(ctx, "Filler")    
+                case "Freeze Trap":
+                    await self.freeze_trap(ctx)
+                case "Eject Trap":
+                    await self.eject_trap(ctx)
         else:
             pass
-
 
     def completed_maingames(self, cleared_games: int) -> set[str]:
         return {
@@ -558,6 +563,9 @@ class KSSUClient(BizHawkClient):
                     
                     (self.kirby_hp, 1, self.ram_mem_domain,),
                     (self.subgame_winner, 2, self.ram_mem_domain),
+                    
+                    (self.megaton_difficulty, 1, self.ram_mem_domain),
+                    (self.samurai_difficulty, 1, self.ram_mem_domain),
                 ]
             )
             
@@ -613,6 +621,7 @@ class KSSUClient(BizHawkClient):
             treasure_received_2 = int.from_bytes(read_state[47], "little")
             tgco_real_1 = int.from_bytes(read_state[48], "little")
             tgco_real_2 = int.from_bytes(read_state[49], "little")
+            # I don't actually use this and the name confused me 
             planets_cleared = int.from_bytes(read_state[50], "little")
             current_rainbow = int.from_bytes(read_state[51], "little")
             bosses_defeated = int.from_bytes(read_state[52], "little")
@@ -626,6 +635,8 @@ class KSSUClient(BizHawkClient):
             mku_block_4 = int.from_bytes(read_state[60], "little")
             current_hp = int.from_bytes(read_state[61], "little", signed=True)
             winner_subgame = int.from_bytes(read_state[62], "little")
+            megaton_punch_difficulty = int.from_bytes(read_state[63], "little")
+            samurai_kirby_difficulty = int.from_bytes(read_state[64], "little")
             
             # =================================
             # Item Handling Loop
@@ -657,12 +668,17 @@ class KSSUClient(BizHawkClient):
                             
                         # The True Arena unlock
                         if subgame_bit == 0x0A:
-                            if true_arena_flag != 15:
+                            if true_arena_flag != 1:
                                 await bizhawk.write(
                                     ctx.bizhawk_ctx,
-                                    [(self.unlock_true_arena, (15).to_bytes(1, "little"), self.ram_mem_domain)],
+                                    [(self.unlock_true_arena, (1).to_bytes(1, "little"), self.ram_mem_domain)],
                                 )
-                                true_arena_flag = 15
+                                await bizhawk.write(
+                                    ctx.bizhawk_ctx,
+                                    [(self.true_arena, (15).to_bytes(1, "little"), self.ram_mem_domain)],
+                                )
+                                true_arena_flag = 1
+                                
 
                     # Abilities
                     case _ if (network_item.item & 0xFFFF00) == (BASE_ID | 0x100) and network_item.item > 0:
@@ -771,7 +787,7 @@ class KSSUClient(BizHawkClient):
                         if index >= received_index:
                             await self.play_sfx(ctx, "Progressive")
                     # Filler    
-                    case "1-Up" | "Maxim Tomato" | "Food" | "Invincible Candy":
+                    case "1-Up" | "Maxim Tomato" | "Food" | "Invincible Candy" | "Freeze Trap" | "Eject Trap":
                         if index >= received_index:
                             self.item_queue.insert(0, network_item)                                                             
                     # What did you get???
@@ -1187,11 +1203,11 @@ class KSSUClient(BizHawkClient):
                 if stage == 1 and screen == 36:
                     if self.progressive_mku_level >= 2 and mku_block_2 == 0x8009:
                         await self.bizhawk_set_halfword(ctx, self.mku_door_2, 0x8193)    
-                # MKU Door 1                
+                # MKU Door 3                
                 if stage == 2 and screen == 29:
                     if self.progressive_mku_level >= 3 and mku_block_3 == 0x8064:
                         await self.bizhawk_set_halfword(ctx, self.mku_door_3, 0x814D)      
-                # MKU Door 2                    
+                # MKU Door 4                    
                 if stage == 3 and screen == 36:
                     if self.progressive_mku_level >= 4 and mku_block_4 == 0x8001:
                         await self.bizhawk_set_halfword(ctx, self.mku_door_4, 0x813A)    
@@ -1244,38 +1260,26 @@ class KSSUClient(BizHawkClient):
             # --- Minigames ---
             # Megaton Punch
             if megaton:
-                game_name = "Megaton Punch"
-
-                labels = {
-                    1: "Waddle Dee",
-                    2: "Knuckle Joe",
-                    3: "Iron Mam",
-                }
+                wins = min(megaton, 3)
+                if ctx.slot_data.get("megaton_punch_difficulties"):
+                    extra = 0x460 + (megaton_punch_difficulty * 3)
+                    for i in range(wins):
+                        send_locations.add(BASE_ID + extra + i)
+                else:
+                    for i in range(wins):
+                        send_locations.add(BASE_ID + 0x450 + i)
                 
-                label = labels.get(megaton)
-                if label:
-                    loc = self.get_location(game_name, label)
-                    if loc is not None:
-                        send_locations.add(loc)
-
             # Samurai Kirby
             if samurai:
-                game_name = "Samurai Kirby"
-
-                labels = {
-                    1: "Waddle Doo",
-                    2: "Wheelie",
-                    3: "Chef Kawasaki",
-                    4: "King Dedede",
-                    5: "Meta Knight",
-                }
-            
-                label = labels.get(samurai)
-                if label:
-                    loc = self.get_location(game_name, label)
-                    if loc is not None:
-                        send_locations.add(loc)
-
+                wins = min(samurai, 5)
+                if ctx.slot_data.get("samurai_kirby_difficulties"):
+                    extra = 0x510 + (samurai_kirby_difficulty * 5)
+                    for i in range(wins):
+                        send_locations.add(BASE_ID + extra + i)                    
+                else:
+                    for i in range(wins):
+                        send_locations.add(BASE_ID + 0x500 + i)
+                        
             # Kirby Card Swipe
             if card_score == 3 and card_difficulty in (0, 1, 2) and winner_subgame == 0:
                 game_name = "Kirby Card Swipe"
@@ -1338,34 +1342,15 @@ class KSSUClient(BizHawkClient):
                     
            # Check for completing the goal and send it to the server
             if not self.goal_complete:
-                goaled = False
                 required_games = set(ctx.slot_data.get("required_maingames", []))
                 finished_games = self.completed_maingames(cleared_games)
-                finished_required = required_games.issubset(finished_games)
+                
+                # Goal Game is always in required games now
+                goaled = required_games.issubset(finished_games)
 
-                if finished_required:
-                    match ctx.slot_data["goal"]:
-                        case "milky_way_wishes":
-                            if cleared_games & 32:
-                                goaled = True
-                        case "main_game_completion":
-                            self.completed_games = bin(cleared_games & 0x7FF).count("1")
-                            if self.completed_games >= ctx.slot_data["required_maingame_completions"]:
-                                goaled = True
-                        case "the_arena":
-                            if cleared_games & 128:
-                                goaled = True
-                        case "revenge_of_the_king":
-                            if cleared_games & 64:
-                                goaled = True
-                        case "meta_knightmare_ultra":
-                            if cleared_games & 256:
-                                goaled = True
-                        case "marx_soul":
-                            if cleared_games & 1024:
-                                goaled = True
-                        case _:
-                            raise Exception("Bad goal in slot data: " + ctx.slot_data["goal"])
+                if goaled and ctx.slot_data["goal"] == "main_game_completion":
+                    self.completed_games = bin(cleared_games & 0x7FF).count("1")
+                    goaled = self.completed_games >= ctx.slot_data["required_maingame_completions"]
 
                 if goaled:
                     self.goal_complete = True

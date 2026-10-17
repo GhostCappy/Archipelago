@@ -251,17 +251,49 @@ the_true_arena_10 = "The True Arena - 10 Straight Wins"
 the_true_arena_complete = "The True Arena - Completed"
 
 # Sub-Games
-# Megaton Punch
+# Megaton Punch (No Difficulties)
 megaton_punch_1 = "Megaton Punch - Waddle Dee"
 megaton_punch_2 = "Megaton Punch - Knuckle Joe"
 megaton_punch_3 = "Megaton Punch - Iron Mam"
 
-# Samurai Kirby
+# Megaton Punch (W/ Difficulties)
+megaton_punch_lv1_1 = "Megaton Punch - Waddle Dee (Level 1)"
+megaton_punch_lv1_2 = "Megaton Punch - Knuckle Joe (Level 1)"
+megaton_punch_lv1_3 = "Megaton Punch - Iron Mam (Level 1)"
+
+megaton_punch_lv2_1 = "Megaton Punch - Waddle Dee (Level 2)"
+megaton_punch_lv2_2 = "Megaton Punch - Knuckle Joe (Level 2)"
+megaton_punch_lv2_3 = "Megaton Punch - Iron Mam (Level 2)"
+
+megaton_punch_lv3_1 = "Megaton Punch - Waddle Dee (Level 3)"
+megaton_punch_lv3_2 = "Megaton Punch - Knuckle Joe (Level 3)"
+megaton_punch_lv3_3 = "Megaton Punch - Iron Mam (Level 3)"
+
+# Samurai Kirby (No Difficulties)
 samurai_kirby_1 = "Samurai Kirby - Waddle Doo"
 samurai_kirby_2 = "Samurai Kirby - Wheelie"
 samurai_kirby_3 = "Samurai Kirby - Chef Kawasaki"
 samurai_kirby_4 = "Samurai Kirby - King Dedede"
 samurai_kirby_5 = "Samurai Kirby - Meta Knight"
+
+# Samurai Kirby (W/ Difficulties)
+samurai_kirby_lv1_1 = "Samurai Kirby - Waddle Doo (Easy)"
+samurai_kirby_lv1_2 = "Samurai Kirby - Wheelie (Easy)"
+samurai_kirby_lv1_3 = "Samurai Kirby - Chef Kawasaki (Easy)"
+samurai_kirby_lv1_4 = "Samurai Kirby - King Dedede (Easy)"
+samurai_kirby_lv1_5 = "Samurai Kirby - Meta Knight (Easy)"
+
+samurai_kirby_lv2_1 = "Samurai Kirby - Waddle Doo (Normal)"
+samurai_kirby_lv2_2 = "Samurai Kirby - Wheelie (Normal)"
+samurai_kirby_lv2_3 = "Samurai Kirby - Chef Kawasaki (Normal)"
+samurai_kirby_lv2_4 = "Samurai Kirby - King Dedede (Normal)"
+samurai_kirby_lv2_5 = "Samurai Kirby - Meta Knight (Normal)"
+
+samurai_kirby_lv3_1 = "Samurai Kirby - Waddle Doo (Hard)"
+samurai_kirby_lv3_2 = "Samurai Kirby - Wheelie (Hard)"
+samurai_kirby_lv3_3 = "Samurai Kirby - Chef Kawasaki (Hard)"
+samurai_kirby_lv3_4 = "Samurai Kirby - King Dedede (Hard)"
+samurai_kirby_lv3_5 = "Samurai Kirby - Meta Knight (Hard)"
 
 # Kirby Card Swipe
 kirby_card_swipe_1 = "Kirby Card Swipe - Level 1"

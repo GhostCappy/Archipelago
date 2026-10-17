@@ -137,10 +137,15 @@ progressive_mku = "Meta Knightmare Ultra - Progressive Level"
 rainbow_star = "Rainbow Star"
 cave_key = "Cave Key"
 
+# Items
 one_up = "1-Up"
 maxim_tomato = "Maxim Tomato"
 food = "Food"
 invincible_candy = "Invincible Candy"
+
+# Traps
+freeze_trap = "Freeze Trap"
+eject_trap = "Eject Trap"
 
 # Hopefully not needed but, the whole list of "Food" items (Excluding 1-Up, Maxim Tomato, and Tomato)
 '''

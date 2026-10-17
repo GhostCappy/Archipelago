@@ -92,11 +92,12 @@ class KSSUWorld(World):
                                F"adding to included main-games")
                 self.options.included_maingames.value.add(game)
 
-        # No starting game is selected, select one at random.
-        if maingame_mapping[self.options.starting_maingame.value] not in self.options.included_maingames:
-            logger.warning(f"Kirby Super Star Ultra ({self.player_name}): Starting maingame not included, choosing random.")
-            self.options.starting_maingame.value = self.random.choice([value[0] for value in maingame_mapping.items()
-                                                                      if value[1] in self.options.included_maingames])
+        # Starting game is not in "Included Games", so we add it.
+        starting_game = maingame_mapping[self.options.starting_maingame.value]
+        if starting_game not in self.options.included_maingames.value:
+            logger.warning(f"Kirby Super Star Ultra ({self.player_name}): Starting main-game {starting_game} "
+                           f"not included, adding to included main-games.")
+            self.options.included_maingames.value.add(starting_game)
 
         # There are more required games than included games?
         ## IDT This can happen if we include required games as required...
@@ -105,6 +106,11 @@ class KSSUWorld(World):
                            f"included maingames, reducing to all included.")
             self.options.required_maingame_completions.value = len(self.options.included_maingames.value)
 
+       # Fix non-deterministic generation by re-ordering list
+        thresholds = self.options.the_great_cave_offensive_thresholds
+        thresholds.value = {area: thresholds.value.get(area, thresholds.default[area])
+                            for area in ("Crystal", "Old Tower", "Garden")}
+        
         if "The Great Cave Offensive" in self.options.included_maingames:
             # If thresholds are messed up (Ex. Crystal has a higher threshold than Old Tower)
             if (self.options.the_great_cave_offensive_thresholds["Crystal"] >
@@ -219,10 +225,11 @@ class KSSUWorld(World):
         # If the subgames are included, add them.
         if self.options.include_subgames.value:
             itempool.extend([self.create_item(name) for name in sub_games])
-            wins = self.options.samurai_kirby_wins.value
-            for name in list(samurai_locations.keys())[wins:]:
-                location = self.multiworld.get_location(name, self.player)
-                location.place_locked_item(self.create_item(self.get_filler_item_name()))
+            if not self.options.samurai_kirby_difficulties:
+                wins = self.options.samurai_kirby_wins.value
+                for name in list(samurai_locations.keys())[wins:]:
+                    location = self.multiworld.get_location(name, self.player)
+                    location.place_locked_item(self.create_item(self.get_filler_item_name()))
 
         location_count = len(list(self.multiworld.get_unfilled_locations(self.player))) - len(itempool)
         if location_count < 0:
@@ -238,10 +245,25 @@ class KSSUWorld(World):
             else:
                 raise OptionError("Unable to create item pool with current settings.")
             
-        itempool.extend([self.create_item(filler) for filler in
-                         self.random.choices(list(filler_item_weights.keys()),
-                                             weights=list(filler_item_weights.values()),
-                                             k=location_count)])
+        # Remaining items are filler and traps
+        trap_weights = {
+            item_names.freeze_trap: self.options.freeze_trap_weight.value,
+            item_names.eject_trap: self.options.eject_trap_weight.value,
+        }
+        trap_count = 0
+        if sum(trap_weights.values()) > 0:
+            trap_count = math.ceil(location_count * (self.options.trap_fill_chance.value / 100))
+        junk_count = location_count - trap_count
+
+        itempool.extend(self.create_item(trap) for trap in
+                        self.random.choices(list(trap_weights.keys()),
+                                            weights=list(trap_weights.values()),
+                                            k=trap_count))
+
+        itempool.extend(self.create_item(filler) for filler in
+                        self.random.choices(list(filler_item_weights.keys()),
+                                            weights=list(filler_item_weights.values()),
+                                            k=junk_count))
         
         required_gold = min(self.options.the_great_cave_offensive_required_gold.value, treasure_value)
 
@@ -255,7 +277,6 @@ class KSSUWorld(World):
         for loc in self.multiworld.get_locations(self.player):
             if loc.address is not None and loc.item and getattr(loc.item, "code", None) is None:
                 print("BAD EVENT ITEM:", loc.name, "has", loc.item.name)
-
         
     set_rules = set_rules
     create_regions = create_regions
@@ -266,7 +287,7 @@ class KSSUWorld(World):
     def fill_slot_data(self) -> Mapping[str, Any]:
         slot_data = self.options.as_dict("included_maingames", "foodsanity", "essences", 
                                          "milky_way_wishes_mode", "deathlink", "required_maingame_completions",
-                                         "the_great_cave_offensive_areas")
+                                         "the_great_cave_offensive_areas", "megaton_punch_difficulties", "samurai_kirby_difficulties")
         slot_data.update({
             "goal": self.options.goal.current_key,
             "treasure_value": self.treasure_value,

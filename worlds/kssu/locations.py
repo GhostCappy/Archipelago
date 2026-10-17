@@ -449,12 +449,42 @@ megaton_locations = {
     location_names.megaton_punch_3: LocationData(BASE_ID + 0x452),
 }
 
+megaton_extra_locations = {
+    location_names.megaton_punch_lv1_1: LocationData(BASE_ID + 0x460),
+    location_names.megaton_punch_lv1_2: LocationData(BASE_ID + 0x461),
+    location_names.megaton_punch_lv1_3: LocationData(BASE_ID + 0x462),
+    location_names.megaton_punch_lv2_1: LocationData(BASE_ID + 0x463),
+    location_names.megaton_punch_lv2_2: LocationData(BASE_ID + 0x464),
+    location_names.megaton_punch_lv2_3: LocationData(BASE_ID + 0x465),
+    location_names.megaton_punch_lv3_1: LocationData(BASE_ID + 0x466),
+    location_names.megaton_punch_lv3_2: LocationData(BASE_ID + 0x467),
+    location_names.megaton_punch_lv3_3: LocationData(BASE_ID + 0x468),
+}
+
 samurai_locations = {
     location_names.samurai_kirby_1: LocationData(BASE_ID + 0x500),
     location_names.samurai_kirby_2: LocationData(BASE_ID + 0x501),
     location_names.samurai_kirby_3: LocationData(BASE_ID + 0x502),
     location_names.samurai_kirby_4: LocationData(BASE_ID + 0x503),
     location_names.samurai_kirby_5: LocationData(BASE_ID + 0x504),
+}
+
+samurai_extra_locations = {
+    location_names.samurai_kirby_lv1_1: LocationData(BASE_ID + 0x510),
+    location_names.samurai_kirby_lv1_2: LocationData(BASE_ID + 0x511),
+    location_names.samurai_kirby_lv1_3: LocationData(BASE_ID + 0x512),
+    location_names.samurai_kirby_lv1_4: LocationData(BASE_ID + 0x513),
+    location_names.samurai_kirby_lv1_5: LocationData(BASE_ID + 0x514),
+    location_names.samurai_kirby_lv2_1: LocationData(BASE_ID + 0x515),
+    location_names.samurai_kirby_lv2_2: LocationData(BASE_ID + 0x516),
+    location_names.samurai_kirby_lv2_3: LocationData(BASE_ID + 0x517),
+    location_names.samurai_kirby_lv2_4: LocationData(BASE_ID + 0x518),
+    location_names.samurai_kirby_lv2_5: LocationData(BASE_ID + 0x519),
+    location_names.samurai_kirby_lv3_1: LocationData(BASE_ID + 0x51A),
+    location_names.samurai_kirby_lv3_2: LocationData(BASE_ID + 0x51B),
+    location_names.samurai_kirby_lv3_3: LocationData(BASE_ID + 0x51C),
+    location_names.samurai_kirby_lv3_4: LocationData(BASE_ID + 0x51D),
+    location_names.samurai_kirby_lv3_5: LocationData(BASE_ID + 0x51E),
 }
 
 card_swipe_locations = {
@@ -477,7 +507,9 @@ snack_track_locations = {
 
 subgame_locations = {
     **megaton_locations,
+    **megaton_extra_locations,
     **samurai_locations,
+    **samurai_extra_locations
     **card_swipe_locations,
     **kotd_locations,
     **snack_track_locations
@@ -539,6 +571,6 @@ __all__ = [
     "mt_dedede_sky_locations", "the_revenge_locations", "revenge_of_the_king_locations",
     "mku_level_1_locations", "mku_level_2_locations", "mku_level_3_locations", "mku_level_4_locations",
     "mku_level_5_locations", "meta_knightmare_locations", "helper_to_hero_locations", 
-    "the_true_arena_locations", "megaton_locations", "samurai_locations", "card_swipe_locations", 
+    "the_true_arena_locations", "megaton_locations", "megaton_extra_locations", "samurai_locations", "samurai_extra_locations", "card_swipe_locations", 
     "kotd_locations", "snack_track_locations", "subgame_locations", "location_table"
 ]

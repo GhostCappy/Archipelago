@@ -2,6 +2,7 @@ import typing
 from typing import Dict, TYPE_CHECKING
 from .items import main_game_completion
 from .names import location_names, item_names
+from .options import Goal
 
 from rule_builder.rules import HasAll, HasAny, Has, HasFromList, HasAnyCount, HasGroupUnique
 
@@ -192,19 +193,20 @@ def set_rules(world: "KSSUWorld") -> None:
         for i in range(2, 11):
             set_rule(world.get_location(f"The True Arena - {i} Straight Wins"),
                         HasGroupUnique("Copy Ability", 10))
-        
+            
+    # Goaling    
     main_game_complete = list(main_game_completion.keys())
     main_game_required = []
     for main_game in main_game_completion.keys():
         if main_game.rsplit(" - ")[0] in world.options.required_maingames:
             main_game_required.append(main_game)
             
-    world.set_completion_rule(
-        HasAll(*main_game_required)
-        & HasFromList(
+    completion_rule = HasAll(*main_game_required)
+    if world.options.goal.current_key == "main_game_completion":
+        completion_rule = completion_rule & HasFromList(
             *main_game_complete,
-            count=(world.options.required_maingame_completions.value),
+            count=world.options.required_maingame_completions.value,
         )
-    )
 
+    world.set_completion_rule(completion_rule)
     

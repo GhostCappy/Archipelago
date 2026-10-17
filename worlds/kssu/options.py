@@ -237,17 +237,13 @@ class IncludeSubgames(Toggle):
     
 class MegatonDifficulties(Toggle):
     """
-    [Not currently implemented] 
-    
-    Adds 6 more locations for beating a foe on each level in Megaton Punch.
+    Adds 6 extra locations for beating a foe on each level in Megaton Punch.
     """
     display_name = "Megaton Punch Levels"
     default = False
     
 class SamuraiDifficulties(Toggle):
     """
-    [Not currently implemented] 
-    
     Adds extra locations for beating a foe on each difficulty in Samurai Kirby.
     """
     display_name = "Samurai Kirby Difficulty"
@@ -256,11 +252,39 @@ class SamuraiDifficulties(Toggle):
 class SamuaraiWins(Range):
     """
     How many opponents / wins can be included as progressive locations in Samurai Kirby.
+    
+    This option only applies if the extra locations for each difficulty is disabled.
     """
     display_name = "Samurai Kirby Wins"
     range_start = 1
     range_end = 5
     default = 4
+
+class TrapFillChance(Range):
+    """Replace a percentage of filler items in the item pool with random traps."""
+    display_name = "Trap Fill Chance"
+    range_start = 0
+    range_end = 100
+    default = 5
+    
+class FreezeTrapWeight(Range):
+    """The chance of receiving a trap which freezes the player."""
+    display_name = "Freeze Trap Weight"
+    range_start = 0
+    range_end = 100
+    default = 5
+    
+class EjectTrapWeight(Range):
+    """"
+    The chance of receiving a trap which ejects Kirby's current ability.
+    
+    For Meta Knightmare Ultra, this will instead get rid of the helper if summoned.
+    For Helper to Hero, this will instead play a short animation.
+    """
+    display_name = "Eject Trap Weight"
+    range_start = 0
+    range_end = 100
+    default = 5
     
 @dataclass
 class KSSUOptions(PerGameCommonOptions):
@@ -283,6 +307,9 @@ class KSSUOptions(PerGameCommonOptions):
     megaton_punch_difficulties: MegatonDifficulties
     samurai_kirby_difficulties: SamuraiDifficulties
     samurai_kirby_wins: SamuaraiWins
+    trap_fill_chance: TrapFillChance
+    freeze_trap_weight: FreezeTrapWeight
+    eject_trap_weight: EjectTrapWeight
     
 option_groups = [
     OptionGroup("General Options", [
@@ -306,9 +333,13 @@ option_groups = [
         MegatonDifficulties,
         SamuraiDifficulties,
         SamuaraiWins
+    ]),
+    OptionGroup("Trap Settings", [
+        TrapFillChance,
+        FreezeTrapWeight,
+        EjectTrapWeight
     ])
 ]
-
 
 option_presets = {
 

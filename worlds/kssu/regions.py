@@ -68,9 +68,19 @@ def create_trivial_regions(world: "KSSUWorld", menu: KSSURegion, included_mainga
         world.multiworld.regions.append(helper_to_hero)
         
     if world.options.include_subgames.value:
+        if world.options.megaton_punch_difficulties:
+            megaton = megaton_extra_locations 
+        else: 
+            megaton = megaton_locations
+
+        if world.options.samurai_kirby_difficulties:
+            samurai = samurai_extra_locations 
+        else: 
+            samurai = samurai_locations
+                   
         subgames = (
-            ("Megaton Punch", megaton_locations, item_names.megaton_punch),
-            ("Samurai Kirby", samurai_locations, item_names.samurai_kirby),
+            ("Megaton Punch", megaton, item_names.megaton_punch),
+            ("Samurai Kirby", samurai, item_names.samurai_kirby),
             ("Kirby Card Swipe", card_swipe_locations, item_names.kirby_card_swipe),
             ("Kirby on the Draw", kotd_locations, item_names.kirby_on_the_draw),
             ("Snack Tracks", snack_track_locations, item_names.snack_tracks),

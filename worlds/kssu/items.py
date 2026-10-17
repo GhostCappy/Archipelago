@@ -160,11 +160,9 @@ dyna_items: Dict[str, ItemData] = {
     item_names.progressive_dyna_blade: ItemData(BASE_ID + 0x802, ItemClassification.progression, num=4)
 }
 
-
 mku_items: Dict[str, ItemData] = {
     item_names.progressive_mku: ItemData(BASE_ID + 0x900, ItemClassification.progression, num=4)
 }
-
 
 misc_items: Dict[str, ItemData] = {
     item_names.one_up: ItemData(BASE_ID + 0x1001, ItemClassification.filler),
@@ -182,6 +180,11 @@ filler_item_weights: Dict[str, int] = {
     item_names.food: 2
 }
 
+trap_items:  Dict[str, ItemData] = {
+    item_names.freeze_trap: ItemData(BASE_ID + 0x2001, ItemClassification.trap),
+    item_names.eject_trap: ItemData(BASE_ID + 0x2002, ItemClassification.trap),
+}
+
 item_table: Dict[str, ItemData] = {
     **main_games,
     **main_game_completion,
@@ -192,6 +195,7 @@ item_table: Dict[str, ItemData] = {
     **dyna_items,
     **mku_items,
     **misc_items
+    **trap_items
 }
 
 item_groups: Dict[str, Set[str]] = {
