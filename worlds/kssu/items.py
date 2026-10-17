@@ -180,7 +180,7 @@ filler_item_weights: Dict[str, int] = {
     item_names.food: 2
 }
 
-trap_items:  Dict[str, ItemData] = {
+trap_items: Dict[str, ItemData] = {
     item_names.freeze_trap: ItemData(BASE_ID + 0x2001, ItemClassification.trap),
     item_names.eject_trap: ItemData(BASE_ID + 0x2002, ItemClassification.trap),
 }
@@ -194,7 +194,7 @@ item_table: Dict[str, ItemData] = {
     **planets,
     **dyna_items,
     **mku_items,
-    **misc_items
+    **misc_items,
     **trap_items
 }
 

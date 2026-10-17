@@ -509,7 +509,7 @@ subgame_locations = {
     **megaton_locations,
     **megaton_extra_locations,
     **samurai_locations,
-    **samurai_extra_locations
+    **samurai_extra_locations,
     **card_swipe_locations,
     **kotd_locations,
     **snack_track_locations

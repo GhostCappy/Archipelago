@@ -272,7 +272,7 @@ class FreezeTrapWeight(Range):
     display_name = "Freeze Trap Weight"
     range_start = 0
     range_end = 100
-    default = 5
+    default = 60
     
 class EjectTrapWeight(Range):
     """"
@@ -284,7 +284,7 @@ class EjectTrapWeight(Range):
     display_name = "Eject Trap Weight"
     range_start = 0
     range_end = 100
-    default = 5
+    default = 40
     
 @dataclass
 class KSSUOptions(PerGameCommonOptions):
