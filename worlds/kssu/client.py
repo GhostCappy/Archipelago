@@ -232,10 +232,12 @@ class KSSUClient(BizHawkClient):
     
     ## Minigames
     ## Samurai
+    samurai_ingame = 0x0A8440
     samurai_difficulty = 0x0A8441
     samurai_wins = 0x0A8448
     
     ## Megaton
+    megaton_ingame = 0x0A83C4
     megaton_difficulty = 0x0A83C5
     megaton_wins = 0x0A83D1
     
@@ -566,6 +568,8 @@ class KSSUClient(BizHawkClient):
                     
                     (self.megaton_difficulty, 1, self.ram_mem_domain),
                     (self.samurai_difficulty, 1, self.ram_mem_domain),
+                    (self.samurai_ingame, 1, self.ram_mem_domain),
+                    (self.megaton_ingame, 1, self.ram_mem_domain),
                 ]
             )
             
@@ -637,6 +641,8 @@ class KSSUClient(BizHawkClient):
             winner_subgame = int.from_bytes(read_state[62], "little")
             megaton_punch_difficulty = int.from_bytes(read_state[63], "little")
             samurai_kirby_difficulty = int.from_bytes(read_state[64], "little")
+            playing_samurai = int.from_bytes(read_state[65], "little")
+            playing_megaton = int.from_bytes(read_state[66], "little")
             
             # =================================
             # Item Handling Loop
@@ -865,12 +871,13 @@ class KSSUClient(BizHawkClient):
                 game_name = "Gourmet Race"
                 if gourmet_wins:
                     # Introducing the worst code ever
+                    # Yep.
                     if gourmet_wins == 1:
                         # Did DDD win round 2?
-                        if ddd_flag_2 == 2:
+                        if ddd_flag_2 == 2 and ddd_flag_1 == 2:
                             round_won = 3
                         # Did DDD win round 1?
-                        elif ddd_flag_1 == 2:
+                        elif ddd_flag_1 == 2 and ddd_flag_2 != 2:
                             round_won = 2
                         else:
                             round_won = 1
@@ -992,7 +999,7 @@ class KSSUClient(BizHawkClient):
 
             # Milky Way Wishes
             # Dreadful: Part 2
-            # If ability is collected in-game
+
             if cleared_games & 32:
                 game_name = "Milky Way Wishes"
                 loc = self.get_location(game_name, "Completed")
@@ -1001,7 +1008,8 @@ class KSSUClient(BizHawkClient):
                 loc = self.location_name_to_id.get("Galactic Nova")
                 if loc is not None:
                     send_locations.add(loc)
-                    
+            # If ability is collected in-game  
+            
             if ability_collected:
                 for bit, x in MWW_ABILITY_OFFSETS.items():
                     if ability_collected & bit:
@@ -1013,14 +1021,7 @@ class KSSUClient(BizHawkClient):
                     if planets_done & (1 << i):
                         send_locations.add(BASE_ID + 90 + i)
 
-            if game == 5:
-                game_name = "Milky Way Wishes"
-                # If ability doesnt match received then make it equal
-                if unlocked_abilities != current_abils:
-                    await bizhawk.write(
-                        ctx.bizhawk_ctx,
-                        [(self.mww_abilities, current_abils.to_bytes(4, "little"), self.ram_mem_domain)],
-                    )                       
+            # FIND A WAY TO UPDATE CURRENT ABILITIES IF ABILITY IS RECIEVED IN-GAME (Run a function?)
 
             # Revenge of the King 
             if cleared_games & 64:
@@ -1259,7 +1260,7 @@ class KSSUClient(BizHawkClient):
 
             # --- Minigames ---
             # Megaton Punch
-            if megaton:
+            if playing_megaton >= 1:
                 wins = min(megaton, 3)
                 if ctx.slot_data.get("megaton_punch_difficulties"):
                     extra = 0x460 + (megaton_punch_difficulty * 3)
@@ -1270,7 +1271,7 @@ class KSSUClient(BizHawkClient):
                         send_locations.add(BASE_ID + 0x450 + i)
                 
             # Samurai Kirby
-            if samurai:
+            if playing_samurai == 2:
                 wins = min(samurai, 5)
                 if ctx.slot_data.get("samurai_kirby_difficulties"):
                     extra = 0x510 + (samurai_kirby_difficulty * 5)
