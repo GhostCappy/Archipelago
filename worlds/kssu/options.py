@@ -110,7 +110,7 @@ class TGCOAreas(Choice):
     """
     Determines how new areas are unlocked in The Great Cave Offensive
     
-    Key: New areas are unlocked with progressive keys found in the pool. Three keys are required to finish the mode.
+    Key: New areas are unlocked with progressive keys found in the pool. Four keys are required to finish the mode.
     
     Gold: Certain gold thresholds must be met before progressing into the next area. This means collecting
     enough treasure to reach a specified amount of gold.

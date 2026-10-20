@@ -41,6 +41,8 @@ def the_great_cave_rules(world: "KSSUWorld") -> None:
                  Has(item_names.cave_key, 3))
         set_rule(world.get_location(location_names.tgco_complete),
                  Has(item_names.cave_key, 4))
+        set_rule(world.get_location(location_names.tgco_cleared),
+                 Has(item_names.cave_key, 4))
     else:
     # Entrances (Gold)
         if world.treasure_value:
@@ -48,6 +50,7 @@ def the_great_cave_rules(world: "KSSUWorld") -> None:
             set_rule(world.get_entrance("Crystal -> Old Tower"), Has("Gold",world.treasure_value[1]))
             set_rule(world.get_entrance("Old Tower -> Garden"), Has("Gold", world.treasure_value[2]))
             set_rule(world.get_location(location_names.tgco_complete), Has("Gold", world.treasure_value[3]))
+            set_rule(world.get_location(location_names.tgco_cleared), Has("Gold", world.treasure_value[3]))
     # Treasures
     set_rule(world.get_location(location_names.tgco_treasure_4),
              HasAny(item_names.wing, item_names.plasma))
