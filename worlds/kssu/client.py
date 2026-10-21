@@ -164,6 +164,7 @@ class KSSUClient(BizHawkClient):
     datapackage_requested = False
     item_queue: List[NetworkItem] = []
     player_actionable = False
+    bad_state = True
     stateAlive = True
     
     cave_keys_collected = 0
@@ -181,6 +182,8 @@ class KSSUClient(BizHawkClient):
     games_cleared = 0x05C158
     
     game_state = 0x04095B
+    save_loaded = 0x06A860
+    kirby_action = 0x0771CD
     
     ## Kirby
     kirby_lifes = 0x05B824
@@ -378,6 +381,22 @@ class KSSUClient(BizHawkClient):
     async def eject_trap(self, ctx: "BizHawkClientContext") -> None:
         await self.bizhawk_set_halfword(ctx, self.call_game_function, 3)
         
+    # DO NOT FREEZE KIRBY IF HES ON A WARP STAR OR ON A CART ETC. THE GAME WILL FREEZE
+    async def check_kirby_state(self, ctx: "BizHawkClientContext") -> None:
+        read_state = await bizhawk.read(
+            ctx.bizhawk_ctx,
+            [
+                (self.kirby_action, 1, self.ram_mem_domain),
+            ]
+        )
+        kirby_state = int.from_bytes(read_state[0], "little")
+        
+        # Cart, Making Helper, Mix, Warp Star, Cannon
+        if kirby_state not in [30, 33, 34, 35, 37]:
+            self.bad_state = False
+        else:
+            self.bad_state = True
+        
     async def in_game(self, ctx: "BizHawkClientContext") -> None:
         read_state = await bizhawk.read(
             ctx.bizhawk_ctx,
@@ -388,8 +407,10 @@ class KSSUClient(BizHawkClient):
         )
         in_game = int.from_bytes(read_state[0], "little")
         demo_check = int.from_bytes(read_state[1], "little")
+        
+        await self.check_kirby_state(ctx)
     
-        if in_game == 3 and demo_check != 11:
+        if in_game == 3 and demo_check != 11 and self.bad_state == False:
             self.player_actionable = True
         else:
             self.player_actionable = False
@@ -570,6 +591,7 @@ class KSSUClient(BizHawkClient):
                     (self.samurai_difficulty, 1, self.ram_mem_domain),
                     (self.samurai_ingame, 1, self.ram_mem_domain),
                     (self.megaton_ingame, 1, self.ram_mem_domain),
+                    (self.save_loaded, 1, self.ram_mem_domain),
                 ]
             )
             
@@ -643,6 +665,18 @@ class KSSUClient(BizHawkClient):
             samurai_kirby_difficulty = int.from_bytes(read_state[64], "little")
             playing_samurai = int.from_bytes(read_state[65], "little")
             playing_megaton = int.from_bytes(read_state[66], "little")
+            save_ready = int.from_bytes(read_state[67], "little", signed=True)
+            
+            # Check if save is loaded to avoid re-sending items
+            if not (8 <= save_ready <= 32):
+                return
+
+            # Re-read offset once save is loaded and ready
+            read_state = await bizhawk.read(
+                ctx.bizhawk_ctx,
+                [(self.received_offset, 2, self.ram_mem_domain)]
+            )
+            received_index = int.from_bytes(read_state[0], "little")
             
             # =================================
             # Item Handling Loop
@@ -653,7 +687,7 @@ class KSSUClient(BizHawkClient):
             self.progressive_mku_level = min(4, names.count("Meta Knightmare Ultra - Progressive Level"))
 
             # Update on item recieved
-            for index in range(min(self.received_items_count, received_index), len(ctx.items_received)):
+            for index in range(received_index, len(ctx.items_received)):
                 network_item = ctx.items_received[index]
                 name = ctx.item_names.lookup_in_game(network_item.item)    
                 match name:
@@ -778,7 +812,7 @@ class KSSUClient(BizHawkClient):
                     # AP-Specific
                     case "Rainbow Star":
                         if index >= received_index:
-                            if current_rainbow < 8:
+                            if current_rainbow < 7:
                                 new_rainbow = current_rainbow + 1
                                 await bizhawk.write(
                                     ctx.bizhawk_ctx,
