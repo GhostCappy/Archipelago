@@ -392,7 +392,7 @@ class KSSUClient(BizHawkClient):
         kirby_state = int.from_bytes(read_state[0], "little")
         
         # Cart, Making Helper, Mix, Warp Star, Cannon
-        if kirby_state not in [30, 33, 34, 35, 37]:
+        if kirby_state not in [28, 30, 33, 34, 35, 37]:
             self.bad_state = False
         else:
             self.bad_state = True
@@ -407,10 +407,8 @@ class KSSUClient(BizHawkClient):
         )
         in_game = int.from_bytes(read_state[0], "little")
         demo_check = int.from_bytes(read_state[1], "little")
-        
-        await self.check_kirby_state(ctx)
     
-        if in_game == 3 and demo_check != 11 and self.bad_state == False:
+        if in_game == 3 and demo_check != 11:
             self.player_actionable = True
         else:
             self.player_actionable = False
@@ -465,9 +463,13 @@ class KSSUClient(BizHawkClient):
                     await self.bizhawk_set_halfword(ctx, self.candy_timer, 1320)
                     await self.play_sfx(ctx, "Filler")    
                 case "Freeze Trap":
-                    await self.freeze_trap(ctx)
+                    await self.check_kirby_state(ctx)
+                    if self.bad_state == False:                    
+                        await self.freeze_trap(ctx)
                 case "Eject Trap":
-                    await self.eject_trap(ctx)
+                    await self.check_kirby_state(ctx)
+                    if self.bad_state == False:   
+                        await self.eject_trap(ctx)
         else:
             pass
 
@@ -829,7 +831,7 @@ class KSSUClient(BizHawkClient):
                     # Filler    
                     case "1-Up" | "Maxim Tomato" | "Food" | "Invincible Candy" | "Freeze Trap" | "Eject Trap":
                         if index >= received_index:
-                            self.item_queue.insert(0, network_item)                                                             
+                            self.item_queue.insert(0, network_item)                                                       
                     # What did you get???
                     case _:
                         raise Exception("Bad item name received: " + name)
