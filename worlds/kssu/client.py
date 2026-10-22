@@ -184,6 +184,7 @@ class KSSUClient(BizHawkClient):
     game_state = 0x04095B
     save_loaded = 0x06A860
     kirby_action = 0x0771CD
+    omfg = 0x0BAF80
     
     ## Kirby
     kirby_lifes = 0x05B824
@@ -387,12 +388,14 @@ class KSSUClient(BizHawkClient):
             ctx.bizhawk_ctx,
             [
                 (self.kirby_action, 1, self.ram_mem_domain),
+                (self.omfg, 1, self.ram_mem_domain),
             ]
         )
         kirby_state = int.from_bytes(read_state[0], "little")
+        opening_treasure = int.from_bytes(read_state[1], "little")
         
         # Cart, Making Helper, Mix, Warp Star, Cannon
-        if kirby_state not in [28, 30, 33, 34, 35, 37]:
+        if (kirby_state not in [28, 30, 33, 34, 35, 37]) and (opening_treasure != 0x22):
             self.bad_state = False
         else:
             self.bad_state = True
@@ -594,6 +597,7 @@ class KSSUClient(BizHawkClient):
                     (self.samurai_ingame, 1, self.ram_mem_domain),
                     (self.megaton_ingame, 1, self.ram_mem_domain),
                     (self.save_loaded, 1, self.ram_mem_domain),
+
                 ]
             )
             
@@ -668,6 +672,7 @@ class KSSUClient(BizHawkClient):
             playing_samurai = int.from_bytes(read_state[65], "little")
             playing_megaton = int.from_bytes(read_state[66], "little")
             save_ready = int.from_bytes(read_state[67], "little", signed=True)
+            
             
             # Check if save is loaded to avoid re-sending items
             if not (8 <= save_ready <= 32):
