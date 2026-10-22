@@ -166,7 +166,13 @@ class KSSUWorld(World):
         # At least one game is needed to play. This game should be removed from item pool.
         modes.remove(starting_mode)
         self.multiworld.push_precollected(starting_mode)
-
+        # Prevent early softlocks when starting in games with small checks
+        # Also make sure that early check specifically isnt The True Arena (Because for lore reasons ofc, not because it caused errors...)
+        if modes:
+            early_games = [x for x in modes if x.name != item_names.the_true_arena]
+            if early_games:
+                self.multiworld.local_early_items[self.player][self.random.choice(early_games).name] = 1
+        
         # Add copy abilities
         itempool.extend([self.create_item(name) for name in copy_abilities])
         itempool.extend(modes)
@@ -255,10 +261,11 @@ class KSSUWorld(World):
             trap_count = math.ceil(location_count * (self.options.trap_fill_chance.value / 100))
         junk_count = location_count - trap_count
 
-        itempool.extend(self.create_item(trap) for trap in
-                        self.random.choices(list(trap_weights.keys()),
-                                            weights=list(trap_weights.values()),
-                                            k=trap_count))
+        if trap_count > 0:
+            itempool.extend(self.create_item(trap) for trap in
+                            self.random.choices(list(trap_weights.keys()),
+                                                weights=list(trap_weights.values()),
+                                                k=trap_count))
 
         itempool.extend(self.create_item(filler) for filler in
                         self.random.choices(list(filler_item_weights.keys()),

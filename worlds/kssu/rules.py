@@ -184,6 +184,9 @@ def set_rules(world: "KSSUWorld") -> None:
     # The Arena 
     if "The Arena" in world.options.included_maingames:
         set_rule = world.set_rule
+        for i in range(4, 10):
+            set_rule(world.get_location(f"The Arena - {i} Straight Wins"),
+                        HasGroupUnique("Copy Ability", 1))
         for i in range(10, 21):
             set_rule(world.get_location(f"The Arena - {i} Straight Wins"),
                         HasGroupUnique("Copy Ability", 5))
@@ -193,9 +196,10 @@ def set_rules(world: "KSSUWorld") -> None:
     # The True Arena
     if "The True Arena" in world.options.included_maingames:
         set_rule = world.set_rule
-        for i in range(2, 11):
+        for i in range(4, 11):
             set_rule(world.get_location(f"The True Arena - {i} Straight Wins"),
-                        HasGroupUnique("Copy Ability", 10))
+                        HasGroupUnique("Copy Ability", 5))
+
             
     # Goaling    
     main_game_complete = list(main_game_completion.keys())
