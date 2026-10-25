@@ -418,7 +418,8 @@ class KSSUClient(BizHawkClient):
     
     async def queue_item(self, ctx: "BizHawkClientContext") -> None:   
         await self.in_game(ctx)
-        if not self.player_actionable:
+        await self.check_kirby_state(ctx)
+        if not self.player_actionable or self.bad_state == True:
             return
         if self.item_queue:
             item = self.item_queue.pop()
@@ -466,13 +467,9 @@ class KSSUClient(BizHawkClient):
                     await self.bizhawk_set_halfword(ctx, self.candy_timer, 1320)
                     await self.play_sfx(ctx, "Filler")    
                 case "Freeze Trap":
-                    await self.check_kirby_state(ctx)
-                    if self.bad_state == False:                    
-                        await self.freeze_trap(ctx)
+                    await self.freeze_trap(ctx)
                 case "Eject Trap":
-                    await self.check_kirby_state(ctx)
-                    if self.bad_state == False:   
-                        await self.eject_trap(ctx)
+                    await self.eject_trap(ctx)
         else:
             pass
 
@@ -1301,7 +1298,7 @@ class KSSUClient(BizHawkClient):
 
             # --- Minigames ---
             # Megaton Punch
-            if playing_megaton >= 1:
+            if 1 <= playing_megaton <= 3:
                 wins = min(megaton, 3)
                 if ctx.slot_data.get("megaton_punch_difficulties"):
                     extra = 0x460 + (megaton_punch_difficulty * 3)
