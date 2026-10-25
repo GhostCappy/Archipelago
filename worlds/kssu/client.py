@@ -418,8 +418,7 @@ class KSSUClient(BizHawkClient):
     
     async def queue_item(self, ctx: "BizHawkClientContext") -> None:   
         await self.in_game(ctx)
-        await self.check_kirby_state(ctx)
-        if not self.player_actionable or self.bad_state == True:
+        if not self.player_actionable:
             return
         if self.item_queue:
             item = self.item_queue.pop()
@@ -467,9 +466,17 @@ class KSSUClient(BizHawkClient):
                     await self.bizhawk_set_halfword(ctx, self.candy_timer, 1320)
                     await self.play_sfx(ctx, "Filler")    
                 case "Freeze Trap":
-                    await self.freeze_trap(ctx)
+                    await self.check_kirby_state(ctx)
+                    if self.bad_state == False:
+                        await self.freeze_trap(ctx)
+                    else:
+                        self.item_queue.insert(0, item)
                 case "Eject Trap":
-                    await self.eject_trap(ctx)
+                    await self.check_kirby_state(ctx)
+                    if self.bad_state == False:                    
+                        await self.eject_trap(ctx)
+                    else:
+                        self.item_queue.insert(0, item)
         else:
             pass
 
